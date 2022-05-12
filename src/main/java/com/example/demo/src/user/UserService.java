@@ -36,6 +36,8 @@ public class UserService {
 
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         // 이메일 중복 확인
+        // 이걸 Dao가 아닌 Provider에서 하는 이유는, 무언가를 체크하는 것도 <조회>에 해당하기 때문
+        // 결국은 Dao로 가지만, Provider를 거쳐간다.
         if(userProvider.checkEmail(postUserReq.getEmail()) ==1){
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
         }
