@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
+import static com.example.demo.config.BaseResponseStatus.NO_USER_ERROR;
 
 //Provider : Read의 비즈니스 로직 처리
 @Service
@@ -62,7 +63,7 @@ public class UserProvider {
         try {
             return userDao.deleteUserByIdx(userIdx);
         } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(NO_USER_ERROR);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.config.BaseException;
 import com.example.demo.src.user.model.DeleteUserRes;
 import com.example.demo.src.user.model.GetUserRes;
 import com.example.demo.src.user.model.PatchUserReq;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
+import static com.example.demo.config.BaseResponseStatus.NO_USER_ERROR;
 
 @Repository
 public class UserDao {
@@ -57,23 +61,28 @@ public class UserDao {
                 getUsersByIdxParams);
     }
 
-    public DeleteUserRes deleteUserByIdx(int userIdx) {
-        String getUsersForDeleteByIdxQuery = "select name,nickName,phone,email,password from User where userIdx=?";
-        int getUsersForDeleteByIdxParams = userIdx;
-        DeleteUserRes deleteUserRes = this.jdbcTemplate.queryForObject(getUsersForDeleteByIdxQuery,
-                (rs, rowNum) -> new DeleteUserRes(
-                        rs.getString("name"),
-                        rs.getString("nickName"),
-                        rs.getString("phone"),
-                        rs.getString("email"),
-                        rs.getString("password")),
-                getUsersForDeleteByIdxParams);
+    public DeleteUserRes deleteUserByIdx(int userIdx) throws BaseException {
+        try {
+            String getUsersForDeleteByIdxQuery = "select name,nickName,phone,email,password from User where userIdx=?";
+            int getUsersForDeleteByIdxParams = userIdx;
+            DeleteUserRes deleteUserRes = this.jdbcTemplate.queryForObject(getUsersForDeleteByIdxQuery,
+                    (rs, rowNum) -> new DeleteUserRes(
+                            rs.getString("name"),
+                            rs.getString("nickName"),
+                            rs.getString("phone"),
+                            rs.getString("email"),
+                            rs.getString("password")),
+                    getUsersForDeleteByIdxParams);
 
-        String deleteUserQuery = "delete from User where userIdx = ?";
-        int deleteUserByIdxParams = userIdx;
-        this.jdbcTemplate.update(deleteUserQuery, deleteUserByIdxParams);
+            String deleteUserQuery = "delete from User where userIdx = ?";
+            int deleteUserByIdxParams = userIdx;
+            this.jdbcTemplate.update(deleteUserQuery, deleteUserByIdxParams);
 
-        return deleteUserRes;
+            return deleteUserRes;
+
+        } catch (Exception exception) {
+            throw new BaseException(NO_USER_ERROR);
+        }
     }
 
     public int createUser(PostUserReq postUserReq){
