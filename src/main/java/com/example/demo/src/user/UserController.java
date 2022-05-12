@@ -67,7 +67,6 @@ public class UserController {
     @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/users/:userIdx
     public BaseResponse<GetUserRes> getUserByIdx(@PathVariable("userIdx")int userIdx) {
         try{
-
             GetUserRes getUsersRes = userProvider.getUsersByIdx(userIdx);
             return new BaseResponse<>(getUsersRes);
         } catch(BaseException exception){
@@ -128,4 +127,17 @@ public class UserController {
         }
     }
 
+    /**
+     * 유저삭제 API
+     */
+    @ResponseBody
+    @PatchMapping("/{userIdx}/status")
+    public BaseResponse<DeleteUserRes> deleteUserByIdx(@PathVariable("userIdx") int userIdx) {
+        try {
+            DeleteUserRes deleteUserRes = userProvider.deleteUserByIdx(userIdx);
+            return new BaseResponse<>(deleteUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }

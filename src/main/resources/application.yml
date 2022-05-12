@@ -7,8 +7,7 @@ spring:
 
   datasource:
     platform: mysql
-    url:  # 변경해주세요
-    username:
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
-    # driver-class-name: com.mysql.jdbc.Driver # mysql 5버전
+    url: jdbc:mysql://umc-server-db.cibrx8boci8j.ap-northeast-2.rds.amazonaws.com:3306/minnminDB?autoReconnection=true
+    username: minnmin
+    password: Alswjd9784!
+    driver-class-name: com.mysql.jdbc.Driver

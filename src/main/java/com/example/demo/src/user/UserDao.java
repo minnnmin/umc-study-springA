@@ -1,6 +1,7 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.src.user.model.DeleteUserRes;
 import com.example.demo.src.user.model.GetUserRes;
 import com.example.demo.src.user.model.PatchUserReq;
 import com.example.demo.src.user.model.PostUserReq;
@@ -44,7 +45,6 @@ public class UserDao {
                 getUsersByEmailParams);
     }
 
-
     public GetUserRes getUsersByIdx(int userIdx){
         String getUsersByIdxQuery = "select userIdx,name,nickName,email from User where userIdx=?";
         int getUsersByIdxParams = userIdx;
@@ -57,13 +57,32 @@ public class UserDao {
                 getUsersByIdxParams);
     }
 
+    public DeleteUserRes deleteUserByIdx(int userIdx) {
+        String getUsersForDeleteByIdxQuery = "select name,nickName,phone,email,password from User where userIdx=?";
+        int getUsersForDeleteByIdxParams = userIdx;
+        DeleteUserRes deleteUserRes = this.jdbcTemplate.queryForObject(getUsersForDeleteByIdxQuery,
+                (rs, rowNum) -> new DeleteUserRes(
+                        rs.getString("name"),
+                        rs.getString("nickName"),
+                        rs.getString("phone"),
+                        rs.getString("email"),
+                        rs.getString("password")),
+                getUsersForDeleteByIdxParams);
+
+        String deleteUserQuery = "delete from User where userIdx = ?";
+        int deleteUserByIdxParams = userIdx;
+        this.jdbcTemplate.update(deleteUserQuery, deleteUserByIdxParams);
+
+        return deleteUserRes;
+    }
+
     public int createUser(PostUserReq postUserReq){
         String createUserQuery = "insert into User (name, nickName, phone, email, password) VALUES (?,?,?,?,?)";
         Object[] createUserParams = new Object[]{postUserReq.getName(), postUserReq.getNickName(),postUserReq.getPhone(), postUserReq.getEmail(), postUserReq.getPassword()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
-        String lastInserIdQuery = "select last_insert_id()";
-        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
     }
 
     public int checkEmail(String email){
@@ -81,6 +100,8 @@ public class UserDao {
 
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
     }
+
+
 
 
 
